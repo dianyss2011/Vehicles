@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Vehicles.API.Data.Entities;
 using Vehicles.API.Helpers;
+using Vehicles.Common.Enums;
 
 namespace Vehicles.API.Data
 {
@@ -25,11 +26,45 @@ namespace Vehicles.API.Data
             await CheckDocumentTypesAsync();
             await CheckProceduresAsync();
             await CheckRolesAsync();
+            await CheckUserAsync("1010", "Brayan", "Zapata", "brayanz@yopmail.com", "300 548 81 45", "Calle 64 # 58 72", UserType.Admin);
+            await CheckUserAsync("2020", "Diana", "Samboni", "dianas@yopmail.com", "300 548 81 45", "Calle 64 # 58 72", UserType.User);
+            await CheckUserAsync("3030", "Emily", "Gallego", "emilyg@yopmail.com", "300 548 81 45", "Calle 64 # 58 72", UserType.User);
+            await CheckUserAsync("4040", "Tamara", "Rendon", "tamarat@yopmail.com", "300 548 81 45", "Calle 64 # 58 72", UserType.Admin);
         }
 
-        private Task CheckRolesAsync()
+        private async Task CheckUserAsync(string document, string firstName, string lastName
+            , string email, string phoneNumber, string address, UserType userType)
         {
-            throw new NotImplementedException();
+            User user = await _userHelper.GetUserAsync(email);
+
+            if (user == null)
+            {
+                user = new User
+                {
+
+                    Address = address,
+                    Document = document,
+                    DocumentType = _context.DocumentTypes.FirstOrDefault(x => x.Description == "Cédula"),
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    PhoneNumber = phoneNumber,
+                    UserName = email,
+                    UserType = userType
+
+                };
+
+                await _userHelper.AddUserAsync(user, "123456");
+                await _userHelper.AddUserToRoleAsync(user, userType.ToString());
+            }
+
+        }
+
+        private async Task CheckRolesAsync()
+        {
+            await _userHelper.CheckRoleAsync(UserType.Admin.ToString());
+            await _userHelper.CheckRoleAsync(UserType.User.ToString());
+
         }
 
         private async Task CheckProceduresAsync()
