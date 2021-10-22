@@ -1,18 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Vehicles.API.Data.Entities;
+using Vehicles.API.Helpers;
 
 namespace Vehicles.API.Data
 {
     public class SeedDb
     {
         private readonly DataContext _context;
+        private readonly IUserHelper _userHelper;
 
-        public SeedDb(DataContext context)
+        public SeedDb(DataContext context, IUserHelper userHelper)
         {
-            this._context = context;
+            _context = context;
+            _userHelper = userHelper;
         }
 
         public async Task SeedAsync()
@@ -22,6 +24,12 @@ namespace Vehicles.API.Data
             await CheckBrandsAsync();
             await CheckDocumentTypesAsync();
             await CheckProceduresAsync();
+            await CheckRolesAsync();
+        }
+
+        private Task CheckRolesAsync()
+        {
+            throw new NotImplementedException();
         }
 
         private async Task CheckProceduresAsync()
